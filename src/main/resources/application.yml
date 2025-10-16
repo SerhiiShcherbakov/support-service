@@ -1,0 +1,30 @@
+spring:
+  application:
+    name: support-service
+  data:
+    mongodb:
+      auto-index-creation: false
+
+server:
+  port: 8080
+  error:
+    include-message: always
+  tomcat:
+    mbeanregistry:
+      enabled: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,metrics,prometheus
+  endpoint:
+    health:
+      show-details: always
+      probes:
+        enabled: true
+
+springdoc:
+  show-actuator: true
+  swagger-ui:
+    display-request-duration: true
