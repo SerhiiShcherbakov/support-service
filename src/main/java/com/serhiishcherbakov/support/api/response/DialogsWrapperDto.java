@@ -4,5 +4,5 @@ import com.serhiishcherbakov.support.domain.dialog.entity.DialogSummary;
 
 import java.util.List;
 
-public record UserDialogsDto(List<DialogSummary> dialogs) {
+public record DialogsWrapperDto(List<DialogSummary> dialogs) {
 }

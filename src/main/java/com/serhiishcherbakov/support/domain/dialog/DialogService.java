@@ -1,6 +1,7 @@
 package com.serhiishcherbakov.support.domain.dialog;
 
 import com.serhiishcherbakov.support.api.request.CloseDialogRequestDto;
+import com.serhiishcherbakov.support.api.request.DialogQueryDto;
 import com.serhiishcherbakov.support.api.request.MessageRequestDto;
 import com.serhiishcherbakov.support.domain.dialog.entity.Dialog;
 import com.serhiishcherbakov.support.domain.dialog.entity.DialogSummary;
@@ -65,5 +66,25 @@ public class DialogService {
         var dialog = dialogRepository.findByIdAndDeletedAtIsNull(id).orElseThrow(DialogNotFoundException::new);
         dialog.deleteByUser(user);
         dialogRepository.save(dialog);
+    }
+
+    public List<DialogSummary> getOperatorDialogs(DialogQueryDto dialogQuery, UserDetails userDetails) {
+        return null;
+    }
+
+    public Dialog getOperatorDialog(String id, UserDetails userDetails) {
+        return null;
+    }
+
+    public Dialog assignOperator(String id, UserDetails userDetails) {
+        return null;
+    }
+
+    public Dialog addOperatorMessage(String id, MessageRequestDto messageRequest, UserDetails userDetails) {
+        return null;
+    }
+
+    public Dialog closeDialogByOperator(String id, UserDetails userDetails) {
+        return null;
     }
 }
