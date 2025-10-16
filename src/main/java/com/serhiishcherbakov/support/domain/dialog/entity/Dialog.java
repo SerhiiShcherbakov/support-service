@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Version;
+import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.Instant;
@@ -18,6 +19,10 @@ import java.util.List;
 @Getter
 
 @Document(collection = "dialogs")
+@CompoundIndex(
+        name = "owner_not_deleted_updated_at_idx",
+        def = "{'ownerId': 1, 'deletedAt': 1, 'updatedAt': -1}"
+)
 public class Dialog {
     @Id
     private String id;
