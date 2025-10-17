@@ -100,4 +100,34 @@ public class Dialog {
             throw new DialogConflictException("You can not add messages to a closed dialog");
         }
     }
+
+    public void assignOperator(User user) {
+        if (this.status != DialogStatus.NEW) {
+            throw new DialogConflictException("You can not assign operator to a dialog that is not in NEW status");
+        }
+
+        this.updatedAt = Instant.now();
+        this.status = DialogStatus.IN_PROGRESS;
+        this.operatorId = user.getId();
+    }
+
+
+    public void addOperatorMessage(MessageRequestDto messageRequest, User user) {
+        if (this.operatorId == null || !this.operatorId.equals(user.getId())) {
+            throw new DialogForbiddenException("You are not the operator of this dialog");
+        }
+        validateNotClosed();
+
+        this.updatedAt = Instant.now();
+        this.messages.add(DialogMessage.newMessage(messageRequest, user));
+    }
+
+    public void closeByOperator(User user) {
+        if (this.operatorId == null || !this.operatorId.equals(user.getId())) {
+            throw new DialogForbiddenException("You are not the operator of this dialog");
+        }
+
+        this.updatedAt = Instant.now();
+        this.status = DialogStatus.CLOSED;
+    }
 }

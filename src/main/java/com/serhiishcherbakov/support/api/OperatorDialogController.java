@@ -4,7 +4,7 @@ import com.serhiishcherbakov.support.api.request.DialogQueryDto;
 import com.serhiishcherbakov.support.api.request.MessageRequestDto;
 import com.serhiishcherbakov.support.api.response.DialogWrapperDto;
 import com.serhiishcherbakov.support.api.response.DialogsWrapperDto;
-import com.serhiishcherbakov.support.domain.dialog.DialogService;
+import com.serhiishcherbakov.support.domain.dialog.OperatorDialogService;
 import com.serhiishcherbakov.support.security.UserDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -15,17 +15,16 @@ import static com.serhiishcherbakov.support.security.UserInterceptor.USER_DETAIL
 @RequestMapping("/api/operator/dialogs")
 @RequiredArgsConstructor
 public class OperatorDialogController {
-    private final DialogService dialogService;
+    private final OperatorDialogService dialogService;
 
-    public DialogsWrapperDto getDialogs(DialogQueryDto dialogQuery,
-                                        @RequestAttribute(USER_DETAILS_ATTRIBUTE) UserDetails userDetails) {
-        return new DialogsWrapperDto(dialogService.getOperatorDialogs(dialogQuery, userDetails));
+    @GetMapping
+    public DialogsWrapperDto getDialogs(DialogQueryDto dialogQuery) {
+        return new DialogsWrapperDto(dialogService.searchDialogs(dialogQuery));
     }
 
     @GetMapping("/{id}")
-    public DialogWrapperDto getDialog(@PathVariable String id,
-                                      @RequestAttribute(USER_DETAILS_ATTRIBUTE) UserDetails userDetails) {
-        return new DialogWrapperDto(dialogService.getOperatorDialog(id, userDetails));
+    public DialogWrapperDto getDialog(@PathVariable String id) {
+        return new DialogWrapperDto(dialogService.getDialog(id));
     }
 
     @PostMapping("/{id}/operator")
@@ -38,12 +37,12 @@ public class OperatorDialogController {
     public DialogWrapperDto addMessage(@PathVariable String id,
                                        @RequestBody MessageRequestDto messageRequest,
                                        @RequestAttribute(USER_DETAILS_ATTRIBUTE) UserDetails userDetails) {
-        return new DialogWrapperDto(dialogService.addOperatorMessage(id, messageRequest, userDetails));
+        return new DialogWrapperDto(dialogService.addMessage(id, messageRequest, userDetails));
     }
 
     @PostMapping("/{id}/close")
     public DialogWrapperDto closeDialog(@PathVariable String id,
                                         @RequestAttribute(USER_DETAILS_ATTRIBUTE) UserDetails userDetails) {
-        return new DialogWrapperDto(dialogService.closeDialogByOperator(id, userDetails));
+        return new DialogWrapperDto(dialogService.closeDialog(id, userDetails));
     }
 }

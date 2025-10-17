@@ -28,3 +28,8 @@ springdoc:
   show-actuator: true
   swagger-ui:
     display-request-duration: true
+
+logging:
+  level:
+    org.springframework.data.mongodb.core: DEBUG
+    org.mongodb.driver.protocol.command: DEBUG
