@@ -1,7 +1,7 @@
 package com.serhiishcherbakov.support.domain.dialog.entity;
 
 import com.serhiishcherbakov.support.api.request.MessageRequestDto;
-import com.serhiishcherbakov.support.domain.user.User;
+import com.serhiishcherbakov.support.security.UserDetailsDto;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -15,9 +15,9 @@ public class DialogMessage {
     private String attachmentKey;
     private Instant createdAt;
 
-    public static DialogMessage newMessage(MessageRequestDto messageRequest, User user) {
+    public static DialogMessage newMessage(MessageRequestDto messageRequest, UserDetailsDto userDetails) {
         var message = new DialogMessage();
-        message.userId = user.getId();
+        message.userId = userDetails.id();
         message.message = messageRequest.message();
         message.attachmentKey = messageRequest.attachmentKey();
         message.createdAt = Instant.now();

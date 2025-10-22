@@ -18,7 +18,6 @@ import java.util.List;
 public class UserDialogService {
     private final DialogRepositoryAdapter dialogRepository;
     private final DialogValidator dialogValidator;
-    private final UserService userService;
 
     public List<DialogSummary> getDialogs(UserDetailsDto userDetails) {
         var sortByUpdatedAt = Sort.by(Sort.Direction.DESC, "updatedAt");
@@ -26,10 +25,9 @@ public class UserDialogService {
     }
 
     public Dialog getDialog(String id, UserDetailsDto userDetails) {
-        var user = userService.syncAndGetUser(userDetails);
         return dialogRepository.findByIdAndDeletedAtIsNull(id)
                 .map(dialog -> {
-                    dialog.validateOwnership(user);
+                    dialog.validateOwnership(userDetails);
                     return dialog;
                 })
                 .orElseThrow(DialogNotFoundException::new);
@@ -38,32 +36,28 @@ public class UserDialogService {
     public Dialog createDialog(MessageRequestDto messageRequest, UserDetailsDto userDetails) {
         dialogValidator.validateDialogMessage(messageRequest);
 
-        var user = userService.syncAndGetUser(userDetails);
-        return dialogRepository.save(Dialog.newDialog(messageRequest, user));
+        return dialogRepository.save(Dialog.newDialog(messageRequest, userDetails));
     }
 
     public Dialog addUserMessage(String id, MessageRequestDto messageRequest, UserDetailsDto userDetails) {
         dialogValidator.validateDialogMessage(messageRequest);
 
-        var user = userService.syncAndGetUser(userDetails);
         var dialog = dialogRepository.findByIdAndDeletedAtIsNull(id).orElseThrow(DialogNotFoundException::new);
-        dialog.addUserMessage(messageRequest, user);
+        dialog.addUserMessage(messageRequest, userDetails);
         return dialogRepository.save(dialog);
     }
 
     public Dialog closeDialog(String id, CloseDialogRequestDto closeDialogRequest, UserDetailsDto userDetails) {
         dialogValidator.validateCloseDialogRequest(closeDialogRequest);
 
-        var user = userService.syncAndGetUser(userDetails);
         var dialog = dialogRepository.findByIdAndDeletedAtIsNull(id).orElseThrow(DialogNotFoundException::new);
-        dialog.closeByUser(closeDialogRequest, user);
+        dialog.closeByUser(closeDialogRequest, userDetails);
         return dialogRepository.save(dialog);
     }
 
     public void deleteDialog(String id, UserDetailsDto userDetails) {
-        var user = userService.syncAndGetUser(userDetails);
         var dialog = dialogRepository.findByIdAndDeletedAtIsNull(id).orElseThrow(DialogNotFoundException::new);
-        dialog.deleteByUser(user);
+        dialog.deleteByUser(userDetails);
         dialogRepository.save(dialog);
     }
 }

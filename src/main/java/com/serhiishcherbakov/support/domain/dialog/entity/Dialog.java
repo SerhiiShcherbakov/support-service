@@ -2,9 +2,9 @@ package com.serhiishcherbakov.support.domain.dialog.entity;
 
 import com.serhiishcherbakov.support.api.request.CloseDialogRequestDto;
 import com.serhiishcherbakov.support.api.request.MessageRequestDto;
-import com.serhiishcherbakov.support.domain.user.User;
 import com.serhiishcherbakov.support.exception.DialogConflictException;
 import com.serhiishcherbakov.support.exception.DialogForbiddenException;
+import com.serhiishcherbakov.support.security.UserDetailsDto;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
@@ -37,11 +37,11 @@ public class Dialog {
     @Version
     private int version;
 
-    public static Dialog newDialog(MessageRequestDto messageRequest, User user) {
+    public static Dialog newDialog(MessageRequestDto messageRequest, UserDetailsDto userDetails) {
         var dialog = new Dialog();
         dialog.status = DialogStatus.NEW;
-        dialog.ownerId = user.getId();
-        dialog.messages = List.of(DialogMessage.newMessage(messageRequest, user));
+        dialog.ownerId = userDetails.id();
+        dialog.messages = List.of(DialogMessage.newMessage(messageRequest, userDetails));
 
         var now = Instant.now();
         dialog.createdAt = now;
@@ -50,25 +50,25 @@ public class Dialog {
         return dialog;
     }
 
-    public void addUserMessage(MessageRequestDto messageRequest, User user) {
-        validateOwnership(user);
+    public void addUserMessage(MessageRequestDto messageRequest, UserDetailsDto userDetails) {
+        validateOwnership(userDetails);
         validateMessagesCount();
         validateNotClosed();
 
         this.updatedAt = Instant.now();
-        this.messages.add(DialogMessage.newMessage(messageRequest, user));
+        this.messages.add(DialogMessage.newMessage(messageRequest, userDetails));
     }
 
-    public void closeByUser(CloseDialogRequestDto closeDialogRequest, User user) {
-        validateOwnership(user);
+    public void closeByUser(CloseDialogRequestDto closeDialogRequest, UserDetailsDto userDetails) {
+        validateOwnership(userDetails);
 
         this.updatedAt = Instant.now();
         this.status = DialogStatus.CLOSED;
         this.feedback = DialogFeedback.newFeedback(closeDialogRequest);
     }
 
-    public void deleteByUser(User user) {
-        validateOwnership(user);
+    public void deleteByUser(UserDetailsDto userDetails) {
+        validateOwnership(userDetails);
         if (this.deletedAt != null) {
             return;
         }
@@ -79,8 +79,8 @@ public class Dialog {
         this.deletedAt = now;
     }
 
-    public void validateOwnership(User user) {
-        if (!this.ownerId.equals(user.getId())) {
+    public void validateOwnership(UserDetailsDto userDetails) {
+        if (!this.ownerId.equals(userDetails.id())) {
             throw new DialogForbiddenException("You are not the owner of this dialog");
         }
     }
@@ -101,29 +101,29 @@ public class Dialog {
         }
     }
 
-    public void assignOperator(User user) {
+    public void assignOperator(UserDetailsDto userDetails) {
         if (this.status != DialogStatus.NEW) {
             throw new DialogConflictException("You can not assign operator to a dialog that is not in NEW status");
         }
 
         this.updatedAt = Instant.now();
         this.status = DialogStatus.IN_PROGRESS;
-        this.operatorId = user.getId();
+        this.operatorId = userDetails.id();
     }
 
 
-    public void addOperatorMessage(MessageRequestDto messageRequest, User user) {
-        if (this.operatorId == null || !this.operatorId.equals(user.getId())) {
+    public void addOperatorMessage(MessageRequestDto messageRequest, UserDetailsDto userDetails) {
+        if (this.operatorId == null || !this.operatorId.equals(userDetails.id())) {
             throw new DialogForbiddenException("You are not the operator of this dialog");
         }
         validateNotClosed();
 
         this.updatedAt = Instant.now();
-        this.messages.add(DialogMessage.newMessage(messageRequest, user));
+        this.messages.add(DialogMessage.newMessage(messageRequest, userDetails));
     }
 
-    public void closeByOperator(User user) {
-        if (this.operatorId == null || !this.operatorId.equals(user.getId())) {
+    public void closeByOperator(UserDetailsDto userDetails) {
+        if (this.operatorId == null || !this.operatorId.equals(userDetails.id())) {
             throw new DialogForbiddenException("You are not the operator of this dialog");
         }
 
