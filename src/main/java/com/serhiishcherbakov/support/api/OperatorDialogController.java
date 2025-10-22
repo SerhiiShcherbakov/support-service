@@ -5,11 +5,10 @@ import com.serhiishcherbakov.support.api.request.MessageRequestDto;
 import com.serhiishcherbakov.support.api.response.DialogWrapperDto;
 import com.serhiishcherbakov.support.api.response.DialogsWrapperDto;
 import com.serhiishcherbakov.support.domain.dialog.OperatorDialogService;
-import com.serhiishcherbakov.support.security.UserDetails;
+import com.serhiishcherbakov.support.security.UserDetailsDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-
-import static com.serhiishcherbakov.support.security.UserInterceptor.USER_DETAILS_ATTRIBUTE;
 
 @RestController
 @RequestMapping("/api/operator/dialogs")
@@ -29,20 +28,20 @@ public class OperatorDialogController {
 
     @PostMapping("/{id}/operator")
     public DialogWrapperDto assignOperator(@PathVariable String id,
-                                           @RequestAttribute(USER_DETAILS_ATTRIBUTE) UserDetails userDetails) {
+                                           @AuthenticationPrincipal UserDetailsDto userDetails) {
         return new DialogWrapperDto(dialogService.assignOperator(id, userDetails));
     }
 
     @PostMapping("/{id}/messages")
     public DialogWrapperDto addMessage(@PathVariable String id,
                                        @RequestBody MessageRequestDto messageRequest,
-                                       @RequestAttribute(USER_DETAILS_ATTRIBUTE) UserDetails userDetails) {
+                                       @AuthenticationPrincipal  UserDetailsDto userDetails) {
         return new DialogWrapperDto(dialogService.addMessage(id, messageRequest, userDetails));
     }
 
     @PostMapping("/{id}/close")
     public DialogWrapperDto closeDialog(@PathVariable String id,
-                                        @RequestAttribute(USER_DETAILS_ATTRIBUTE) UserDetails userDetails) {
+                                        @AuthenticationPrincipal  UserDetailsDto userDetails) {
         return new DialogWrapperDto(dialogService.closeDialog(id, userDetails));
     }
 }

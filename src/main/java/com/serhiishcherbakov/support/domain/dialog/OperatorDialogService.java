@@ -6,7 +6,7 @@ import com.serhiishcherbakov.support.domain.dialog.entity.Dialog;
 import com.serhiishcherbakov.support.domain.dialog.entity.DialogSummary;
 import com.serhiishcherbakov.support.domain.user.UserService;
 import com.serhiishcherbakov.support.exception.DialogNotFoundException;
-import com.serhiishcherbakov.support.security.UserDetails;
+import com.serhiishcherbakov.support.security.UserDetailsDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -29,14 +29,14 @@ public class OperatorDialogService {
         return dialogRepository.findById(id).orElseThrow(DialogNotFoundException::new);
     }
 
-    public Dialog assignOperator(String id, UserDetails userDetails) {
+    public Dialog assignOperator(String id, UserDetailsDto userDetails) {
         var user = userService.syncAndGetUser(userDetails);
         var dialog = getDialog(id);
         dialog.assignOperator(user);
         return dialogRepository.save(dialog);
     }
 
-    public Dialog addMessage(String id, MessageRequestDto messageRequest, UserDetails userDetails) {
+    public Dialog addMessage(String id, MessageRequestDto messageRequest, UserDetailsDto userDetails) {
         dialogValidator.validateDialogMessage(messageRequest);
         var user = userService.syncAndGetUser(userDetails);
         var dialog = getDialog(id);
@@ -44,7 +44,7 @@ public class OperatorDialogService {
         return dialogRepository.save(dialog);
     }
 
-    public Dialog closeDialog(String id, UserDetails userDetails) {
+    public Dialog closeDialog(String id, UserDetailsDto userDetails) {
         var user = userService.syncAndGetUser(userDetails);
         var dialog = getDialog(id);
         dialog.closeByOperator(user);
