@@ -1,7 +1,7 @@
 package com.serhiishcherbakov.support.domain.dialog;
 
 import com.serhiishcherbakov.support.domain.dialog.entity.Dialog;
-import com.serhiishcherbakov.support.domain.dialog.entity.DialogSummary;
+import com.serhiishcherbakov.support.domain.dialog.entity.projection.DialogSummary;
 import org.springframework.data.mongodb.repository.Aggregation;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
@@ -26,7 +26,8 @@ public interface DialogRepository extends MongoRepository<Dialog, String> {
                             deletedAt: 1,
                             owner: 1,
                             operator: 1,
-                            version: 1
+                            version: 1,
+                            lastMessage: { $arrayElemAt: ["$messages", -1] }
                         }
                     }
             """

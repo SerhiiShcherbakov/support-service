@@ -1,5 +1,6 @@
-package com.serhiishcherbakov.support.domain.dialog.entity;
+package com.serhiishcherbakov.support.domain.dialog.entity.projection;
 
+import com.serhiishcherbakov.support.domain.dialog.entity.DialogStatus;
 import com.serhiishcherbakov.support.domain.user.User;
 import lombok.Getter;
 import lombok.Setter;
@@ -8,7 +9,7 @@ import java.time.Instant;
 
 @Setter
 @Getter
-public class DialogSummary {
+public class DialogProjection {
     private String id;
     private DialogStatus status;
     private Instant createdAt;

@@ -2,7 +2,7 @@ package com.serhiishcherbakov.support.domain.dialog;
 
 import com.serhiishcherbakov.support.api.request.DialogQueryDto;
 import com.serhiishcherbakov.support.domain.dialog.entity.Dialog;
-import com.serhiishcherbakov.support.domain.dialog.entity.DialogSummary;
+import com.serhiishcherbakov.support.domain.dialog.entity.projection.DialogSummary;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -42,7 +42,9 @@ public class DialogRepositoryAdapter {
         pipeline.add(Aggregation.lookup("users", "operatorId", "_id", "operator"));
         pipeline.add(Aggregation.unwind("owner", true));
         pipeline.add(Aggregation.unwind("operator", true));
-        pipeline.add(Aggregation.project("id", "status", "createdAt", "updatedAt", "deletedAt", "owner", "operator", "version"));
+        pipeline.add(Aggregation.project("id", "status", "createdAt", "updatedAt", "deletedAt", "owner", "operator", "version")
+                .and(ArrayOperators.ArrayElemAt.arrayOf("messages").elementAt(-1))
+        );
 
         return mongoTemplate.aggregate(Aggregation.newAggregation(pipeline), "dialogs", DialogSummary.class).getMappedResults();
     }
