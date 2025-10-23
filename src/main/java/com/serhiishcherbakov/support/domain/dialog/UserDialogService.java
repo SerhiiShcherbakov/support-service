@@ -4,7 +4,6 @@ import com.serhiishcherbakov.support.api.request.CloseDialogRequestDto;
 import com.serhiishcherbakov.support.api.request.MessageRequestDto;
 import com.serhiishcherbakov.support.domain.dialog.entity.Dialog;
 import com.serhiishcherbakov.support.domain.dialog.entity.DialogSummary;
-import com.serhiishcherbakov.support.domain.user.UserService;
 import com.serhiishcherbakov.support.exception.DialogNotFoundException;
 import com.serhiishcherbakov.support.security.UserDetailsDto;
 import lombok.RequiredArgsConstructor;
@@ -20,8 +19,7 @@ public class UserDialogService {
     private final DialogValidator dialogValidator;
 
     public List<DialogSummary> getDialogs(UserDetailsDto userDetails) {
-        var sortByUpdatedAt = Sort.by(Sort.Direction.DESC, "updatedAt");
-        return dialogRepository.findAllByOwnerIdAndDeletedAtIsNull(userDetails.id(), sortByUpdatedAt);
+        return dialogRepository.findAllByOwnerIdAndDeletedAtIsNull(userDetails.id());
     }
 
     public Dialog getDialog(String id, UserDetailsDto userDetails) {

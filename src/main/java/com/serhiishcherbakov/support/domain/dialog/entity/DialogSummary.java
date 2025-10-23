@@ -1,5 +1,6 @@
 package com.serhiishcherbakov.support.domain.dialog.entity;
 
+import com.serhiishcherbakov.support.domain.user.User;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -13,7 +14,7 @@ public class DialogSummary {
     private Instant createdAt;
     private Instant updatedAt;
     private Instant deletedAt;
-    private String ownerId;
-    private String operatorId;
+    private User owner;
+    private User operator;
     private int version;
 }
