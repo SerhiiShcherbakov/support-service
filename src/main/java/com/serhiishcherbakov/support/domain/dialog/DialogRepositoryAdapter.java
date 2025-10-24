@@ -2,7 +2,7 @@ package com.serhiishcherbakov.support.domain.dialog;
 
 import com.serhiishcherbakov.support.api.request.DialogQueryDto;
 import com.serhiishcherbakov.support.domain.dialog.entity.Dialog;
-import com.serhiishcherbakov.support.domain.dialog.entity.projection.DialogSummary;
+import com.serhiishcherbakov.support.domain.dialog.entity.DialogSummary;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
